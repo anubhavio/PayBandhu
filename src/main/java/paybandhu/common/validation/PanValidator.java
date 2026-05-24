@@ -11,7 +11,7 @@ public class PanValidator implements ConstraintValidator<validPan, String> {
         if (value == null) {
             return false;
         }
-        return value.matches("[A-Z]{5}[0-9]{4}[A-Z]{1}");
+        return value.matches("^A-Z]{5}[0-9]{4}[A-Z]{1}$");
     }
 
 
