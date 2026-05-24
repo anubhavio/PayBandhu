@@ -13,6 +13,6 @@ public class MobileNumberValidator implements ConstraintValidator<ValidMobileNum
             return false;
         }
 
-        return value.matches("[6-9]\\d{9}");
+        return value.matches("^[6-9]\\d{9}$");
     }
 }
