@@ -7,7 +7,7 @@ public class AadhaarValidator implements ConstraintValidator<validAadhaar, Strin
     @Override
     public boolean isValid(String value
             , ConstraintValidatorContext constraintValidatorContext) {
-        if(value == null){
+        if(value == null ){
             return false;
         }
         return value.matches("\\d{12}");
