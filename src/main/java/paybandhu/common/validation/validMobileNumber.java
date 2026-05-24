@@ -6,5 +6,7 @@ import java.lang.annotation.Documented;
 
 @Documented
 @Constraint(validatedBy = MobileNumberValidator.class)
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface validMobileNumber {
 }
