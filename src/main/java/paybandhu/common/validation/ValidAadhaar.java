@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = AadhaarValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface validAadhaar  {
+public @interface ValidAadhaar {
 
     String message() default "Invalid Aadhaar number";
 
