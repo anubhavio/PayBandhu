@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = PanValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface validPan {
+public @interface ValidPan {
 
     String message() default"Invalid Pan number";
     Class<?>[] groups() default{};
