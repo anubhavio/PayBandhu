@@ -62,6 +62,10 @@ public class Agent {
     @Column(name = "registration_ip" , nullable = false)
     private String registrationIp;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rejection_reason")
+    private AgentRejectionReason agentRejectionReason;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -69,4 +73,10 @@ public class Agent {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void reject(AgentRejectionReason reason){
+        this.status = AgentStatus.REJECTED;
+        this.agentRejectionReason = reason;
+        this.verifiedAt = LocalDateTime.now();
+    }
 }
