@@ -3,7 +3,7 @@ package paybandhu.common.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class AadhaarValidator implements ConstraintValidator<validAadhaar, String> {
+public class AadhaarValidator implements ConstraintValidator<ValidAadhaar, String> {
     @Override
     public boolean isValid(String value
             , ConstraintValidatorContext constraintValidatorContext) {
