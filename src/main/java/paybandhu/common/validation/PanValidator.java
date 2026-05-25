@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.lang.annotation.Annotation;
 
-public class PanValidator implements ConstraintValidator<validPan, String> {
+public class PanValidator implements ConstraintValidator<ValidPan, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
