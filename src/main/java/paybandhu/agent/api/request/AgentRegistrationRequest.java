@@ -1,4 +1,4 @@
-package paybandhu.agent.api;
+package paybandhu.agent.api.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
@@ -6,11 +6,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import paybandhu.agent.domain.Gender;
 import paybandhu.common.validation.ValidAadhaar;
 import paybandhu.common.validation.ValidMobileNumber;
 import paybandhu.common.validation.ValidPan;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -43,5 +45,13 @@ public class AgentRegistrationRequest {
     @NotBlank(message = "Address is required")
     private AddressRegistrationRequest address;
 
+    private Gender gender;
+
+    @JsonFormat(pattern = "dd-mm-yyyy")
+    private LocalDate dateOfBirth;
+
+    @Valid
+    @NotBlank(message = "Upload documents")
+    private List<AgentDocumentRequest> agentDocumentRequest;
 
 }

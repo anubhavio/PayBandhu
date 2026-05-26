@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -59,8 +61,20 @@ public class Agent {
     @Column(name = "Date_Of_Birth", nullable = false)
     private LocalDate dateOfBirth;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false)
+    private Gender gender;
+
+
+    @OneToMany
+    private List<AgentDocument> documents = new ArrayList<>();
+
     @Column(name = "registration_ip" , nullable = false)
     private String registrationIp;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rejection_reason")
+    private AgentRejectionReason agentRejectionReason;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -69,4 +83,10 @@ public class Agent {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void reject(AgentRejectionReason reason){
+        this.status = AgentStatus.REJECTED;
+        this.agentRejectionReason = reason;
+        this.verifiedAt = LocalDateTime.now();
+    }
 }
