@@ -59,6 +59,14 @@ public class Agent {
     @Column(name = "Date_Of_Birth", nullable = false)
     private LocalDate dateOfBirth;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false)
+    private Gender gender;
+
+
+    @OneToMany
+    private List<AgentDocument> documents = new ArrayList<>();
+
     @Column(name = "registration_ip" , nullable = false)
     private String registrationIp;
 
