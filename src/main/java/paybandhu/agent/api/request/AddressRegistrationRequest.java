@@ -1,4 +1,4 @@
-package paybandhu.agent.api;
+package paybandhu.agent.api.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
