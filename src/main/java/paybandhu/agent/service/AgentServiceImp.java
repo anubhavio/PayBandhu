@@ -2,15 +2,15 @@ package paybandhu.agent.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import paybandhu.agent.api.request.AgentDocumentRequest;
 import paybandhu.agent.api.request.AgentRegistrationRequest;
 import paybandhu.agent.api.response.AgentRegistrationResponse;
-import paybandhu.agent.domain.Address;
-import paybandhu.agent.domain.Agent;
-import paybandhu.agent.domain.AgentDocument;
-import paybandhu.agent.domain.AgentStatus;
+import paybandhu.agent.domain.*;
 import paybandhu.agent.repository.AgentRepository;
 import paybandhu.common.Exception.DuplicateResourceException;
+import paybandhu.common.Exception.ResourceNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +18,8 @@ import java.util.Optional;
 public class AgentServiceImp implements AgentService{
 
     private final AgentRepository agentRepository;
+    private  Agent agent;
+
 
     @Override
     public AgentRegistrationResponse registerAgent(AgentRegistrationRequest request, String ipAddress) {
@@ -56,6 +58,35 @@ public class AgentServiceImp implements AgentService{
                 .build();
     }
 
+    @Override
+    public AgentRegistrationResponse uploadDocuments(List<AgentDocumentRequest> documentRequest, Long agentId , String ipAddress) {
+        Agent agent = agentRepository.findById(agentId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Agent not found with id: " + agentId));
+        if(agent.getStatus() != AgentStatus.REGISTERED) {
+            throw new IllegalStateException(
+                    "Documents can only uploaded by agents in REGISTERED status.." +
+                            "Current status: " + agent.getStatus());
+        }
+        documentRequest.stream()
+                .map(documents -> AgentDocument.builder()
+                        .documentType(documents.getDocumentType())
+                        .fileUrl(documents.getFileUrl())
+                        .documentStatus(DocumentStatus.IN_REVIEW)
+                        .agent(agent)
+                        .build())
+                .forEach(doc -> agent.getDocuments().add(doc));
+
+        agent.setStatus(AgentStatus.PENDING_REVIEW);
+        Agent saved = agentRepository.save(agent);
+        return  AgentRegistrationResponse.builder()
+                .id(saved.getId())
+                .agentCode(saved.getAgentCode())
+                .status(saved.getStatus())
+                .message("Documents is uploaded successfully. Pending review")
+                .build();
+    }
+
     private void checkDuplicates(AgentRegistrationRequest request){
 
         Optional<Agent> existing = agentRepository.findByMobileNumber(request.getMobileNumber());
@@ -80,9 +111,13 @@ public class AgentServiceImp implements AgentService{
     }
 
 
+
+
     @Override
     public AgentRegistrationResponse verifyAgent(Long agentId) {
-        return null;
+ return null;
+
+
     }
 
     @Override

@@ -42,5 +42,8 @@ public class AgentDocument {
     @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
+    @Enumerated(EnumType.STRING)
+    private DocumentStatus documentStatus;
+
 
 }
