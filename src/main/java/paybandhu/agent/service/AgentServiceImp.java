@@ -10,8 +10,10 @@ import paybandhu.agent.repository.AgentRepository;
 import paybandhu.common.Exception.DuplicateResourceException;
 import paybandhu.common.Exception.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +45,7 @@ public class AgentServiceImp implements AgentService{
                 .aadhaarNumber(request.getAadhaarNumber())
                 .panNumber(request.getPanNumber())
                 .address(address)
-                .agentCode("AGT-"+System.currentTimeMillis())
+                .agentCode("AGT-"+ UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .status(AgentStatus.REGISTERED)
                 .registrationIp(ipAddress)
                 .build();
@@ -115,7 +117,26 @@ public class AgentServiceImp implements AgentService{
 
     @Override
     public AgentRegistrationResponse verifyAgent(Long agentId) {
- return null;
+        Agent agent = agentRepository.findById(agentId).orElseThrow(() -> new ResourceNotFoundException(
+                "Agent not found" + agentId
+        ));
+        if (agent.getStatus() != AgentStatus.PENDING_REVIEW) {
+            throw new IllegalStateException("Only agent who uploaded documents can be verified");
+        }
+
+        for(AgentDocument doc : agent.getDocuments()){
+            doc.setDocumentStatus(DocumentStatus.VERIFIED);
+        }
+        agent.setStatus(AgentStatus.ACTIVE);
+        agent.setVerifiedAt(LocalDateTime.now());
+        Agent saved = agentRepository.save(agent);
+
+ return AgentRegistrationResponse.builder()
+         .id(saved.getId())
+         .agentCode(saved.getAgentCode())
+         .status(saved.getStatus())
+         .message("Agent verified successfully. now agent is ACTIVE")
+         .build();
 
 
     }
