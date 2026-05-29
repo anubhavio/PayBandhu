@@ -1,5 +1,6 @@
 package paybandhu.agent.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import paybandhu.agent.api.request.AgentDocumentRequest;
@@ -20,10 +21,10 @@ import java.util.UUID;
 public class AgentServiceImp implements AgentService{
 
     private final AgentRepository agentRepository;
-    private  Agent agent;
 
 
     @Override
+    @Transactional
     public AgentRegistrationResponse registerAgent(AgentRegistrationRequest request, String ipAddress) {
 
         checkDuplicates(request);
@@ -44,6 +45,7 @@ public class AgentServiceImp implements AgentService{
                 .emailAddress(request.getEmailAddress())
                 .aadhaarNumber(request.getAadhaarNumber())
                 .panNumber(request.getPanNumber())
+                .gender(request.getGender())
                 .address(address)
                 .agentCode("AGT-"+ UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .status(AgentStatus.REGISTERED)
@@ -61,7 +63,7 @@ public class AgentServiceImp implements AgentService{
     }
 
     @Override
-    public AgentRegistrationResponse uploadDocuments(List<AgentDocumentRequest> documentRequest, Long agentId , String ipAddress) {
+    public AgentRegistrationResponse uploadDocuments(List<AgentDocumentRequest> documentRequest, Long agentId ) {
         Agent agent = agentRepository.findById(agentId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Agent not found with id: " + agentId));
@@ -96,7 +98,7 @@ public class AgentServiceImp implements AgentService{
         if (existing.isPresent()){
             Agent agent = existing.get();
             switch (agent.getStatus()){
-                case REGISTERED -> throw new DuplicateResourceException(
+                case REJECTED -> throw new DuplicateResourceException(
                         "Application was rejected. Reason: "+ agent.getAgentRejectionReason()
                 );
                 case ACTIVE -> throw new DuplicateResourceException(
@@ -142,7 +144,22 @@ public class AgentServiceImp implements AgentService{
     }
 
     @Override
-    public AgentRegistrationResponse rejectAgent(Long agentId, String reason) {
-        return null;
+    public AgentRegistrationResponse rejectAgent(Long agentId, AgentRejectionReason reason) {
+        Agent agent = agentRepository.findById(agentId).orElseThrow(()
+                -> new ResourceNotFoundException("Agent not present "+agentId));
+        if(agent.getStatus() != AgentStatus.PENDING_REVIEW){
+            throw new IllegalStateException("Only Review pending agent can be rejected");
+        }
+        for(AgentDocument doc : agent.getDocuments()){
+            doc.setDocumentStatus(DocumentStatus.REJECTED);
+        }
+        agent.reject(reason);
+        Agent saved = agentRepository.save(agent);
+        return AgentRegistrationResponse.builder()
+                .id(saved.getId())
+                .agentCode(saved.getAgentCode())
+                .status(saved.getStatus())
+                .message("Agent rejected "+ reason )
+                .build();
     }
 }
