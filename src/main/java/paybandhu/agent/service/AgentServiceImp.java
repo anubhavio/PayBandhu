@@ -45,6 +45,7 @@ public class AgentServiceImp implements AgentService{
                 .emailAddress(request.getEmailAddress())
                 .aadhaarNumber(request.getAadhaarNumber())
                 .panNumber(request.getPanNumber())
+                .gender(request.getGender())
                 .address(address)
                 .agentCode("AGT-"+ UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .status(AgentStatus.REGISTERED)
