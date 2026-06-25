@@ -13,4 +13,5 @@ public interface AgentService {
     AgentRegistrationResponse uploadDocuments(List<AgentDocumentRequest> documentRequest, Long agentId );
     AgentRegistrationResponse  verifyAgent(Long agentId);
      AgentRegistrationResponse rejectAgent(Long agentId, AgentRejectionReason reason);
+
 }
