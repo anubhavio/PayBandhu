@@ -143,6 +143,8 @@ public class AgentServiceImp implements AgentService{
 
     }
 
+
+
     @Override
     public AgentRegistrationResponse rejectAgent(Long agentId, AgentRejectionReason reason) {
         Agent agent = agentRepository.findById(agentId).orElseThrow(()

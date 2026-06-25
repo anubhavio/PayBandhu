@@ -1,5 +1,8 @@
 package paybandhu.agent.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum AgentRejectionReason {
     PAN_MISMATCH("Pan Mismatch"),
     AADHAAR_MISMATCH("Aadhaar Mismatch"),
@@ -12,8 +15,5 @@ public enum AgentRejectionReason {
 
     AgentRejectionReason(String value) {
     this.value = value;
-    }
-    public String getValue(){
-        return value;
     }
 }
