@@ -46,6 +46,13 @@ public class AgnetController {
     }
 
 
+    @PostMapping("/{agentId}/verify")
+    public ResponseEntity<AgentVerificationResponse> verifyAgent(
+            @PathVariable Long agentId
+    ) {
+        AgentVerificationResponse response = agentService.verifyAgent(agentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
 
 }
