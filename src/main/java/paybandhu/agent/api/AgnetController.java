@@ -54,5 +54,14 @@ public class AgnetController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/{agentId}/reject")
+    public ResponseEntity<AgentVerificationResponse> rejectAgent(
+            @PathVariable Long agentId,
+            @Valid @RequestBody AgentRejectionReasonRequest reasonRequest
+            )
+    {
+    AgentVerificationResponse  response = agentService.rejectAgent(agentId, reasonRequest.getReason());
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
 
 }
