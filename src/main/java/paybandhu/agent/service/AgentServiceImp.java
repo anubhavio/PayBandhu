@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import paybandhu.agent.api.request.AgentDocumentRequest;
 import paybandhu.agent.api.request.AgentRegistrationRequest;
+import paybandhu.agent.api.response.AgentDocumentResponse;
 import paybandhu.agent.api.response.AgentRegistrationResponse;
 import paybandhu.agent.domain.*;
 import paybandhu.agent.repository.AgentRepository;
@@ -46,6 +47,7 @@ public class AgentServiceImp implements AgentService{
                 .aadhaarNumber(request.getAadhaarNumber())
                 .panNumber(request.getPanNumber())
                 .gender(request.getGender())
+                .dateOfBirth(request.getDateOfBirth())
                 .address(address)
                 .agentCode("AGT-"+ UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .status(AgentStatus.REGISTERED)
@@ -63,31 +65,41 @@ public class AgentServiceImp implements AgentService{
     }
 
     @Override
-    public AgentRegistrationResponse uploadDocuments(List<AgentDocumentRequest> documentRequest, Long agentId ) {
+    public AgentDocumentResponse uploadDocuments(List<AgentDocumentRequest> documentRequest,
+                                                 Long agentId) {
+
         Agent agent = agentRepository.findById(agentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Agent not found with id: " + agentId));
-        if(agent.getStatus() != AgentStatus.REGISTERED) {
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Agent not found with id: " + agentId));
+
+        if (agent.getStatus() != AgentStatus.REGISTERED) {
             throw new IllegalStateException(
-                    "Documents can only uploaded by agents in REGISTERED status.." +
-                            "Current status: " + agent.getStatus());
+                    "Documents can only be uploaded by agents in REGISTERED status. Current status: "
+                            + agent.getStatus());
         }
+
         documentRequest.stream()
-                .map(documents -> AgentDocument.builder()
-                        .documentType(documents.getDocumentType())
-                        .fileUrl(documents.getFileUrl())
+                .map(document -> AgentDocument.builder()
+                        .documentType(document.getDocumentType())
+                        .fileName(document.getFileName())
+                        .fileUrl(document.getFileUrl())
+                        .contentType(document.getContentType())
+                        .fileSize(document.getFileSize())
+                        .uploadedAt(LocalDateTime.now())
                         .documentStatus(DocumentStatus.IN_REVIEW)
                         .agent(agent)
                         .build())
                 .forEach(doc -> agent.getDocuments().add(doc));
 
         agent.setStatus(AgentStatus.PENDING_REVIEW);
+
         Agent saved = agentRepository.save(agent);
-        return  AgentRegistrationResponse.builder()
+
+        return AgentDocumentResponse.builder()
                 .id(saved.getId())
                 .agentCode(saved.getAgentCode())
                 .status(saved.getStatus())
-                .message("Documents is uploaded successfully. Pending review")
+                .message("Documents uploaded successfully. Pending review.")
                 .build();
     }
 

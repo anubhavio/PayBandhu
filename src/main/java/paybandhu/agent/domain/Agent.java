@@ -66,7 +66,11 @@ public class Agent {
     private Gender gender;
 
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = "agent",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<AgentDocument> documents = new ArrayList<>();
 
     @Column(name = "registration_ip" , nullable = false)
