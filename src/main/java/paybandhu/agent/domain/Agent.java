@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import paybandhu.agent.api.request.AgentRejectionReasonRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -90,7 +91,7 @@ public class Agent {
 
     public void reject(AgentRejectionReason reason){
         this.status = AgentStatus.REJECTED;
-        this.agentRejectionReason = reason;
+        this.agentRejectionReason =  reason;
         this.verifiedAt = LocalDateTime.now();
     }
 }

@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import paybandhu.agent.api.request.AgentDocumentRequest;
 import paybandhu.agent.api.request.AgentRegistrationRequest;
+import paybandhu.agent.api.request.AgentRejectionReasonRequest;
 import paybandhu.agent.api.response.AgentDocumentResponse;
 import paybandhu.agent.api.response.AgentRegistrationResponse;
+import paybandhu.agent.api.response.AgentVerificationResponse;
 import paybandhu.agent.domain.*;
 import paybandhu.agent.repository.AgentRepository;
 import paybandhu.common.Exception.DuplicateResourceException;
@@ -130,7 +132,7 @@ public class AgentServiceImp implements AgentService{
 
 
     @Override
-    public AgentRegistrationResponse verifyAgent(Long agentId) {
+    public AgentVerificationResponse verifyAgent(Long agentId) {
         Agent agent = agentRepository.findById(agentId).orElseThrow(() -> new ResourceNotFoundException(
                 "Agent not found" + agentId
         ));
@@ -145,7 +147,7 @@ public class AgentServiceImp implements AgentService{
         agent.setVerifiedAt(LocalDateTime.now());
         Agent saved = agentRepository.save(agent);
 
- return AgentRegistrationResponse.builder()
+ return AgentVerificationResponse.builder()
          .id(saved.getId())
          .agentCode(saved.getAgentCode())
          .status(saved.getStatus())
@@ -155,10 +157,8 @@ public class AgentServiceImp implements AgentService{
 
     }
 
-
-
     @Override
-    public AgentRegistrationResponse rejectAgent(Long agentId, AgentRejectionReason reason) {
+    public AgentVerificationResponse rejectAgent(Long agentId, AgentRejectionReason reason) {
         Agent agent = agentRepository.findById(agentId).orElseThrow(()
                 -> new ResourceNotFoundException("Agent not present "+agentId));
         if(agent.getStatus() != AgentStatus.PENDING_REVIEW){
@@ -169,7 +169,7 @@ public class AgentServiceImp implements AgentService{
         }
         agent.reject(reason);
         Agent saved = agentRepository.save(agent);
-        return AgentRegistrationResponse.builder()
+        return AgentVerificationResponse.builder()
                 .id(saved.getId())
                 .agentCode(saved.getAgentCode())
                 .status(saved.getStatus())
