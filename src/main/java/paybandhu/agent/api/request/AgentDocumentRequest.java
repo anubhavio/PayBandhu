@@ -21,7 +21,6 @@ public class AgentDocumentRequest {
 
     private Long fileSize;
 
-    @ManyToOne
     private Agent agent;
 
 }

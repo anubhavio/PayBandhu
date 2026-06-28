@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import paybandhu.agent.domain.Gender;
@@ -38,20 +39,17 @@ public class AgentRegistrationRequest {
     @ValidAadhaar
     private String aadhaarNumber;
 
-    @JsonFormat(pattern = "dd-mm-yyyy")
-    private LocalDate dataOfBirth;
-
+    @NotNull
     @Valid
-    @NotBlank(message = "Address is required")
     private AddressRegistrationRequest address;
 
     private Gender gender;
 
-    @JsonFormat(pattern = "dd-mm-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
 
     @Valid
-    @NotBlank(message = "Upload documents")
+    @NotNull
     private List<AgentDocumentRequest> agentDocumentRequest;
 
 }

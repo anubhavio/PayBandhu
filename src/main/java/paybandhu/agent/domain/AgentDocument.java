@@ -2,9 +2,7 @@ package paybandhu.agent.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 @Table(name = "agent_documents")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AgentDocument {
 
     @Id
