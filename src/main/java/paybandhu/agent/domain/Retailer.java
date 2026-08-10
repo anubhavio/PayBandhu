@@ -43,7 +43,7 @@ public class Retailer {
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
-    @Column(name = "Date_Of_Birth", nullable = false)
+    @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
