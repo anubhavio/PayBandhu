@@ -11,7 +11,6 @@ import paybandhu.agent.domain.AgentStatus;
 @Builder
 public class AgentRegistrationResponse {
 
-
     private Long id;
 
     private String agentCode;
