@@ -28,6 +28,10 @@ public class Retailer {
     @Column(name = "retailer_no", length = 30, unique = true, nullable = false)
     private String retailerCode;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "agent_id", nullable = false)
+    private Agent agent;
+
     @Column(name = "first_name", length = 50)
     private String firstName;
 
