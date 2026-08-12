@@ -1,7 +1,8 @@
-package paybandhu.agent.domain;
+package paybandhu.retailer.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import paybandhu.agent.domain.DocumentStatus;
 
 import java.time.LocalDateTime;
 

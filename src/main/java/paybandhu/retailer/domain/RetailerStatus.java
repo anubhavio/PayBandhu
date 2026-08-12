@@ -1,4 +1,4 @@
-package paybandhu.agent.domain;
+package paybandhu.retailer.domain;
 
 import lombok.Getter;
 
