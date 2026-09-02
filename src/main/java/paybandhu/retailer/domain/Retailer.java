@@ -45,6 +45,9 @@ public class Retailer {
     @Column(name = "mobile_number", length = 50, nullable = false, unique = true)
     private String mobileNumber;
 
+    @Column(name = "email_address", length = 150, nullable = false, unique = true)
+    private String emailAddress;
+
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 

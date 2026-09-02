@@ -6,9 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import paybandhu.agent.api.request.AddressRegistrationRequest;
+import paybandhu.agent.domain.Gender;
+import paybandhu.agent.domain.RegistrationLocation;
 import paybandhu.common.validation.ValidAadhaar;
 import paybandhu.common.validation.ValidMobileNumber;
 import paybandhu.common.validation.ValidPan;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -33,6 +37,12 @@ public class RetailerRegistrationRequest {
 
     @ValidAadhaar
     private String aadhaarNumber;
+
+    private Gender gender;
+
+    private LocalDate dateOfBirth;
+
+    private RegistrationLocation registrationLocation;
 
     @NotBlank
     @Valid

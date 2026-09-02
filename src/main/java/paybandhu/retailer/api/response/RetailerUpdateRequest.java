@@ -23,6 +23,9 @@ public class RetailerUpdateRequest {
     @Pattern(regexp = "^[0-9]{10}$")
     private String mobileNumber;
 
+    @Size(max = 150)
+    private String emailAddress;
+
     private AddressRegistrationRequest address;
 
 }
