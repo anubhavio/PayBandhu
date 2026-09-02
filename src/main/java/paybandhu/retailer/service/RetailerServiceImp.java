@@ -14,23 +14,5 @@ import java.util.List;
 @Service
 public class RetailerServiceImp implements RetailerService{
 
-    @Override
-    public RetailerRegistrationResponse registerRetailer(RetailerRegistrationRequest request, String ipAddress, RegistrationLocation registrationLocation) {
-        return null;
-    }
 
-    @Override
-    public RetailerDocumentResponse uploadDocuments(List<RetailerDocumentRequest> documentRequests, Long retailerId) {
-        return null;
-    }
-
-    @Override
-    public RetailerVerificationResponse verifyRetailer(Long retailerId) {
-        return null;
-    }
-
-    @Override
-    public RetailerVerificationResponse rejectRetailer(Long retailerId, RetailerRejectionReason reason) {
-        return null;
-    }
 }

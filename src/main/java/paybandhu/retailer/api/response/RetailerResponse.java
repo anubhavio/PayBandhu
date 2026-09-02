@@ -8,7 +8,7 @@ import paybandhu.retailer.domain.RetailerStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RetailerRegistrationResponse {
+public class RetailerResponse {
 
     private Long id;
 
