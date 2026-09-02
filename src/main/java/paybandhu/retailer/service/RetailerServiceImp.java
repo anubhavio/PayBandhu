@@ -8,6 +8,7 @@ import paybandhu.agent.domain.Address;
 import paybandhu.agent.domain.AgentStatus;
 import paybandhu.agent.domain.RegistrationLocation;
 import paybandhu.common.Exception.DuplicateResourceException;
+import paybandhu.common.Exception.ResourceNotFoundException;
 import paybandhu.retailer.api.request.RetailerRegistrationRequest;
 import paybandhu.retailer.api.request.RetailerRejectionReason;
 import paybandhu.retailer.api.response.RetailerResponse;
@@ -67,7 +68,11 @@ public class RetailerServiceImp implements RetailerService{
 
     @Override
     public RetailerResponse getById(Long retailerId) {
-        return null;
+
+        Retailer retailer = retailerRepository.findById(retailerId)
+                .orElseThrow(() -> new ResourceNotFoundException("" +
+                        "Retailer not found with id: " + retailerId));
+        return  mapToResponse(retailer);
     }
 
     @Override
@@ -131,6 +136,16 @@ public class RetailerServiceImp implements RetailerService{
         }
 
 
+    }
+
+    private RetailerResponse mapToResponse(Retailer retailer){
+        return RetailerResponse.builder()
+                .id(retailer.getId())
+                .retailerCode(retailer.getRetailerCode())
+                .firstName(retailer.getFirstName())
+                .mobileNumber(retailer.getMobileNumber())
+                .status(retailer.getStatus())
+                .build();
     }
 
 }

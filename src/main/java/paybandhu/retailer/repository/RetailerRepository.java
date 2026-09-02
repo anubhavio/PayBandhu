@@ -8,8 +8,13 @@ import java.util.Optional;
 
 public interface RetailerRepository extends JpaRepository<Retailer, Long> {
     Optional<Retailer> findByRetailerCode(String retailerCode);
+
+    Optional<Retailer> findById(Long retailerId);
+
     Optional<Retailer> findByMobileNumber(String mobileNumber);
+
     Optional<Retailer> findByPanNumber(String panNumber);
+
     Optional<Retailer> findByAadhaarNumber(String aadhaarNumber);
 
     boolean existsByRetailerCode(String retailerCode);
