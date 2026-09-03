@@ -70,18 +70,24 @@ public class RetailerServiceImp implements RetailerService{
     public RetailerResponse getById(Long retailerId) {
 
         Retailer retailer = retailerRepository.findById(retailerId)
-                .orElseThrow(() -> new ResourceNotFoundException("" +
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Retailer not found with id: " + retailerId));
         return  mapToResponse(retailer);
     }
 
     @Override
     public RetailerResponse getByCode(String retailerCode) {
-        return null;
+
+        Retailer retailer = retailerRepository.findByRetailerCode(retailerCode)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Retailer not found with id: "+ retailerCode));
+
+        return mapToResponse(retailer);
     }
 
     @Override
     public Page<RetailerResponse> getCurrentAgentRetailers(Pageable pageable) {
+
         return null;
     }
 
