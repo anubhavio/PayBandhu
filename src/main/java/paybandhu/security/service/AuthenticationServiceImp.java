@@ -1,6 +1,9 @@
 package paybandhu.security.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import paybandhu.security.api.request.LoginRequest;
@@ -12,32 +15,28 @@ import paybandhu.security.repository.UserRepository;
 @RequiredArgsConstructor
 public class AuthenticationServiceImp  implements AuthenticationService{
 
-  private final UserRepository userRepository;
-
-  private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
 
     @Override
     public LoginResponse login(LoginRequest request) {
 
-        User user = userRepository.findByMobileNumber(request
-                .getMobileNumber())
-                .orElseThrow(() -> new RuntimeException("Invalid mobile number of password")
-                );
+       Authentication authentication = authenticationManager.authenticate(
+               new UsernamePasswordAuthenticationToken(
+                       request.getMobileNumber(),
+                       request.getPassword()
+               )
+       );
 
-        if(!user.isEnabled()){
-            throw new RuntimeException("user account is disabled");
-        }
+       CustomUserDetails userDetails =
+               (CustomUserDetails) authentication.getPrincipal();
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invalid mobile number of password");
-        }
+       User user = userDetails.getUser();
 
-        return LoginResponse.builder()
-                .userId(user.getId())
-                .mobileNumber(user.getMobileNumber())
-                .role(user.getRole().name())
-                .build();
-
+       return LoginResponse.builder()
+               .userId(user.getId())
+               .mobileNumber(user.getMobileNumber())
+               .role(user.getRole().name())
+               .build();
 
     }
 }
