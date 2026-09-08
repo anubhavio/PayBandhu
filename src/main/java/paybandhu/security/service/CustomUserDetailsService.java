@@ -1,4 +1,4 @@
-package paybandhu.retailer.service;
+package paybandhu.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import paybandhu.security.domain.User;
 import paybandhu.security.repository.UserRepository;
-import paybandhu.security.service.CustomUserDetails;
 
 @Service
 @RequiredArgsConstructor
