@@ -17,6 +17,8 @@ public class AuthenticationServiceImp  implements AuthenticationService{
 
   private final AuthenticationManager authenticationManager;
 
+  private final JwtService jwtService;
+
     @Override
     public LoginResponse login(LoginRequest request) {
 
@@ -32,10 +34,16 @@ public class AuthenticationServiceImp  implements AuthenticationService{
 
        User user = userDetails.getUser();
 
+       String token = jwtService.generateToken(
+               user.getMobileNumber(),
+               user.getRole().name()
+       );
+
        return LoginResponse.builder()
                .userId(user.getId())
                .mobileNumber(user.getMobileNumber())
                .role(user.getRole().name())
+               .token(token)
                .build();
 
     }
