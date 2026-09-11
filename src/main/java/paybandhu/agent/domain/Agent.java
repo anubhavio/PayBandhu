@@ -42,7 +42,7 @@ public class Agent {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(name = "mobile_number", length = 50, nullable = false, unique = true)
+    @Column(name = "mobile_number", length = 15, nullable = false, unique = true)
     private String mobileNumber;
 
     @Column(name = "email_address", length = 50, unique = true, nullable = false)
