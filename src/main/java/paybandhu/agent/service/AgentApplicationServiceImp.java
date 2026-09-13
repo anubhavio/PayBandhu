@@ -21,7 +21,8 @@ public class AgentApplicationServiceImp implements AgentApplicationService{
 
     @Override
     @Transactional
-    public AgentApplicationResponse submitApplication(AgentApplicationRequest request) {
+    public AgentApplicationResponse submitApplication(AgentApplicationRequest request,
+                                                      String registrationIp) {
 
         //Check duplicate mobile number
         if(agentApplicationRepository.existsByMobileNumber
@@ -44,6 +45,12 @@ public class AgentApplicationServiceImp implements AgentApplicationService{
                     "An application already exists with this Pan number "
             );
 
+        //Check duplicate Email
+        if (agentApplicationRepository.existsByEmailAddress(request.getEmailAddress()))
+            throw new IllegalArgumentException(
+                    "An application already exists with this email address"
+            );
+
         Address address = Address.builder()
                 .state(request.getAddress().getState())
                 .city(request.getAddress().getCity())
@@ -64,6 +71,7 @@ public class AgentApplicationServiceImp implements AgentApplicationService{
                 .dateOfBirth(request.getDateOfBirth())
                 .gender(request.getGender())
                 .address(address)
+                .registrationIp(registrationIp)
                 .status(AgentApplicationStatus.SUBMITTED)
                 .build();
 

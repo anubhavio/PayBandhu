@@ -23,9 +23,15 @@ public interface AgentApplicationRepository extends JpaRepository<AgentApplicati
             String panNumber
     );
 
+    Optional<AgentApplication> findByEmailAddress(
+            String emailAddress
+    );
+
     boolean existsByMobileNumber(String mobileNumber);
 
     boolean existsByAadhaarNumber(String aadhaarNumber);
 
     boolean existsByPanNumber(String panNumber);
+
+    boolean existsByEmailAddress(String emailAddress);
 }
