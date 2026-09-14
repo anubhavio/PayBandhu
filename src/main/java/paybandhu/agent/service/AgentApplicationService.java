@@ -6,6 +6,6 @@ import paybandhu.agent.api.response.AgentApplicationResponse;
 public interface AgentApplicationService {
 
     AgentApplicationResponse submitApplication(
-            AgentApplicationRequest request
+            AgentApplicationRequest request, String registrationIp
     );
 }

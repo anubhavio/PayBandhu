@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import paybandhu.agent.api.request.AgentApplicationRequest;
 import paybandhu.agent.api.response.AgentApplicationResponse;
 import paybandhu.agent.service.AgentApplicationService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/agent-applications")
@@ -19,10 +20,13 @@ public class AgentApplicationController {
     @PostMapping
     public ResponseEntity<AgentApplicationResponse> submitApplication(
             @Valid @RequestBody AgentApplicationRequest agentApplicationRequest
+            , HttpServletRequest httpRequest
             ){
 
+        String registrationIp = httpRequest.getRemoteAddr();
+
         AgentApplicationResponse response =
-                agentApplicationService.submitApplication(agentApplicationRequest);
+                agentApplicationService.submitApplication(agentApplicationRequest, registrationIp);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
