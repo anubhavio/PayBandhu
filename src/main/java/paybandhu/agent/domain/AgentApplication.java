@@ -6,6 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import paybandhu.agentKyc.AgentKyc;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,6 +69,9 @@ public class AgentApplication {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AgentApplicationStatus status;
+
+    @OneToOne(mappedBy = "agentApplication")
+    private AgentKyc agentKyc;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rejection_reason")
