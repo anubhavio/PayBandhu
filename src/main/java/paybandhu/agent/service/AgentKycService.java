@@ -1,4 +1,7 @@
-package paybandhu.agentKyc;
+package paybandhu.agent.service;
+
+import paybandhu.agent.domain.AgentKyc;
+import paybandhu.agent.domain.AgentKycStatus;
 
 import java.util.List;
 

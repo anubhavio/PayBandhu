@@ -1,4 +1,4 @@
-package paybandhu.agentKyc;
+package paybandhu.agent.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AgentBankAccount {
+public  class AgentBankAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

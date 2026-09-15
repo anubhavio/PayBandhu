@@ -2,11 +2,9 @@ package paybandhu.agent.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import paybandhu.agentKyc.AgentKyc;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
