@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-interface AgentKycRepository extends JpaRepository<AgentKyc, Long> {
+public interface AgentKycRepository extends JpaRepository<AgentKyc, Long> {
 
     Optional<AgentKyc> findByKycReferenceNumber(String kycReferenceNumber);
 
