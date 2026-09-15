@@ -1,4 +1,4 @@
-package paybandhu.agentKyc;
+package paybandhu.agent.domain;
 
 public enum AgentKycStatus {
     PENDING,

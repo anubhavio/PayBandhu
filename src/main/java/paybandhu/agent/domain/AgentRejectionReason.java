@@ -1,6 +1,6 @@
 package paybandhu.agent.domain;
 
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 public enum AgentRejectionReason {

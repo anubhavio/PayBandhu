@@ -1,10 +1,9 @@
-package paybandhu.agentKyc;
+package paybandhu.agent.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import paybandhu.agent.domain.AgentApplication;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class AgentKyc {
+public  class AgentKyc {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

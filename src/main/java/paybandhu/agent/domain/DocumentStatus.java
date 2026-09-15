@@ -1,5 +1,8 @@
 package paybandhu.agent.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum DocumentStatus {
     IN_REVIEW("Your document sent for review"),
         REVIEW_PENDING("Review pending"),
@@ -10,8 +13,5 @@ public enum DocumentStatus {
 
     DocumentStatus(String value){
         this.value = value;
-    }
-    public String getValue(){
-        return value;
     }
 }
