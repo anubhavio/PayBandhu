@@ -11,6 +11,7 @@ import paybandhu.agent.domain.AgentKycStatus;
 import paybandhu.agent.repository.AgentApplicationRepository;
 import paybandhu.agent.repository.AgentKycRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,16 +24,18 @@ public class AgentKycServiceImp implements AgentKycService{
 
     @Override
     @Transactional
-    public AgentKyc initiateKyc(Long applicationId) {
+    public AgentKycResponse initiateKyc(Long applicationId) {
 
         AgentApplication application =
                 agentApplicationRepository.findById(applicationId)
                         .orElseThrow(() ->
-                                new IllegalArgumentException("Agent application not found " + applicationId)
+                                new IllegalArgumentException(
+                                        "Agent application not found " + applicationId)
                         );
 
         if(application.getStatus() != AgentApplicationStatus.SUBMITTED){
-            throw new IllegalStateException("KYC can only be initiate for submitted application"
+            throw new IllegalStateException(
+                    "KYC can only be initiate for submitted application"
             );
         }
 
@@ -49,7 +52,9 @@ public class AgentKycServiceImp implements AgentKycService{
                 .build();
 
 
-        return   agentKycRepository.save(agentKyc);
+        AgentKyc saved =   agentKycRepository.save(agentKyc);
+
+        return mapToResponse(saved);
     }
 
     public String generateKycReferenceNumber(){
@@ -63,7 +68,8 @@ public class AgentKycServiceImp implements AgentKycService{
     @Override
     public AgentKyc getKycByApplicationId(Long applicationId) {
         return agentKycRepository.findByAgentApplicationId(applicationId)
-                .orElseThrow(() ->  new IllegalArgumentException(" Kyc not found for application: " + applicationId)
+                .orElseThrow(() ->  new IllegalArgumentException(
+                        "Kyc not found for application: " + applicationId)
                 );
     }
 
@@ -71,12 +77,63 @@ public class AgentKycServiceImp implements AgentKycService{
     @Override
     public AgentKyc getKycByReferenceNumber(String kycReferenceNumber) {
         return agentKycRepository.findByKycReferenceNumber(kycReferenceNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Kyc not found for reference number: " + kycReferenceNumber));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Kyc not found for reference number: " + kycReferenceNumber));
     }
 
     @Override
+    @Transactional
+    public AgentKycResponse startKyc(Long applicationId){
+
+        AgentKyc agentKyc = agentKycRepository
+                .findByAgentApplicationId(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Kyc not found for application: "+applicationId)
+                );
+
+        if(agentKyc.getStatus() != AgentKycStatus.PENDING){
+            throw new IllegalStateException(
+                    "Kyc can only be stated when it's status is PENDING"
+            );
+        }
+
+        agentKyc.setStatus(AgentKycStatus.IN_PROGRESS);
+
+        AgentKyc saved =  agentKycRepository.save(agentKyc);
+        return mapToResponse(saved);
+    }
+
+    @Override
+    @Transactional
     public AgentKyc completeKyc(Long applicationId) {
-        return null;
+
+        AgentKyc agentKyc = agentKycRepository
+                .findByAgentApplicationId(applicationId).orElseThrow(() -> new IllegalArgumentException("Kyc not found for application: "+applicationId)
+                );
+
+        if(agentKyc.getStatus() != AgentKycStatus.IN_PROGRESS){
+            throw new IllegalStateException(
+                    "Kyc can only be completed when it is in progress"
+            );
+        }
+
+        /*
+         * TODO:
+         * Validate that all required KYC components are completed:
+         *
+         * Aadhaar      ✓
+         * PAN          ✓
+         * Signature    ✓
+         * Bank Account ✓
+         * Live Photo   ✓
+         * Biometric    ✓
+         */
+
+        agentKyc.setStatus(AgentKycStatus.SUBMITTED);
+        agentKyc.setCompletedAt(LocalDateTime.now());
+
+
+        return agentKycRepository.save(agentKyc);
     }
 
     @Override

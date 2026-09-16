@@ -3,7 +3,7 @@ package paybandhu.agent.domain;
 public enum AgentKycStatus {
     PENDING,
     IN_PROGRESS,
-    COMPLETED,
+    SUBMITTED,
     VERIFIED,
     REJECTED,
     FAILED

@@ -32,7 +32,7 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/agent-applications").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/agent-applications", "/api/agent-kyc/**").permitAll()
                         .anyRequest().authenticated()
 
                 )

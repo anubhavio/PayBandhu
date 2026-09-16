@@ -1,5 +1,6 @@
 package paybandhu.agent.service;
 
+import paybandhu.agent.api.response.AgentKycResponse;
 import paybandhu.agent.domain.AgentKyc;
 import paybandhu.agent.domain.AgentKycStatus;
 
@@ -7,11 +8,13 @@ import java.util.List;
 
 public interface AgentKycService {
 
-    AgentKyc initiateKyc(Long applicationId);
+    AgentKycResponse initiateKyc(Long applicationId);
 
     AgentKyc getKycByApplicationId(Long applicationId);
 
     AgentKyc getKycByReferenceNumber(String kycReferenceNumber);
+
+    AgentKycResponse startKyc(Long applicationId);
 
     AgentKyc completeKyc(Long applicationId);
 
