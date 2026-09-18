@@ -79,6 +79,47 @@ public class AgentKycDocumentServiceIml implements AgentKycDocumentService{
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public AgentKycDocumentResponse verifyDocument(Long applicationId, Long documentId) {
+
+        AgentKyc agentKyc = agentKycRepository.findByAgentApplicationId(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "KYC not found for application: "+applicationId
+                        )
+                );
+
+        AgentKycDocument document = agentKycDocumentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "KYC not found: "+documentId
+                        )
+                );
+
+        if (!document.getAgentKyc().getId().equals(agentKyc.getId())) {
+            throw new IllegalStateException(
+                    "Document does not belong to this KYC"
+            );
+        }
+
+        if (document.getStatus() != KycDocumentStatus.UPLOADED) {
+            throw new IllegalStateException(
+                    "Only uploaded documents can be verified"
+            );
+        }
+
+        document.setStatus(KycDocumentStatus.VERIFIED);
+
+        AgentKycDocument savedDocument =
+                agentKycDocumentRepository.save(document);
+
+        return mapToResponse(savedDocument);
+    }
+
+    @Override
+    public AgentKycDocumentResponse rejectDocument(Long applicationId, Long documentId, String reason) {
+        return null;
+    }
+
     private AgentKycDocumentResponse mapToResponse(
             AgentKycDocument document) {
 

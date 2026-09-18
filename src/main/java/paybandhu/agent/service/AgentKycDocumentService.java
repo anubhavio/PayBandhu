@@ -15,4 +15,15 @@ public interface AgentKycDocumentService {
     List<AgentKycDocumentResponse> getDocuments(
             Long applicationId
     );
+
+    AgentKycDocumentResponse verifyDocument(
+            Long applicationId,
+            Long documentId
+    );
+
+    AgentKycDocumentResponse rejectDocument(
+            Long applicationId,
+            Long documentId,
+            String reason
+    );
 }
