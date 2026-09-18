@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "agent_kyc")
@@ -31,6 +33,9 @@ public  class AgentKyc {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AgentKycStatus status;
+
+    @OneToMany(mappedBy = "agentKyc", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AgentKycDocument> documents = new ArrayList<>();
 
     @Column(name = "failure_reason", length = 500)
     private String failureReason;
