@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import paybandhu.agent.api.request.AgentKycDocumentRequest;
 import paybandhu.agent.api.response.AgentKycDocumentResponse;
@@ -40,5 +41,32 @@ public class AgentKycDocumentController {
 
     }
 
+    @PostMapping("/{applicationId}/documents/{documentId}/verify")
+    public ResponseEntity<AgentKycDocumentResponse> verifyDocument(
+            @PathVariable Long applicationId,
+            @PathVariable Long documentId ){
+
+        AgentKycDocumentResponse response =
+                agentKycDocumentService.verifyDocument(
+                        applicationId,
+                        documentId
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{applicationId}/documents/{documentId}/reject")
+    public ResponseEntity<AgentKycDocumentResponse> rejectDocument(
+            @PathVariable Long applicationId,
+            @PathVariable Long documentId,
+            @RequestParam String reason ){
+
+        AgentKycDocumentResponse response = agentKycDocumentService.rejectDocument(applicationId,
+                documentId,
+                reason
+        );
+
+        return ResponseEntity.ok(response);
+    }
 
 }
