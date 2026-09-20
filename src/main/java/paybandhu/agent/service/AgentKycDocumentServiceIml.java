@@ -150,6 +150,7 @@ public class AgentKycDocumentServiceIml implements AgentKycDocumentService{
         }
 
         document.setStatus(KycDocumentStatus.REJECTED);
+        document.setRejectionReason(reason);
 
         AgentKycDocument savedDocument =
                 agentKycDocumentRepository.save(document);
@@ -167,6 +168,7 @@ public class AgentKycDocumentServiceIml implements AgentKycDocumentService{
                 .documentType(document.getDocumentType())
                 .status(document.getStatus())
                 .fileReference(document.getFileReference())
+                .rejectionReason(document.getRejectionReason())
                 .build();
     }
 }

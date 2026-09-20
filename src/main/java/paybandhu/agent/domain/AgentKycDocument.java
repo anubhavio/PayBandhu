@@ -34,4 +34,7 @@ public class AgentKycDocument {
     @Column(nullable = false)
     private KycDocumentStatus status;
 
+    @Column(name = "rejection_reason", length = 500)
+    private String rejectionReason;
+
 }

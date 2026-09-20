@@ -20,4 +20,7 @@ public class AgentKycDocumentResponse {
     private KycDocumentStatus status;
 
     private String fileReference;
+
+    private String rejectionReason;
+
 }
