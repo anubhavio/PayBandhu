@@ -4,23 +4,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import paybandhu.agent.api.response.AgentKycResponse;
-import paybandhu.agent.domain.AgentApplication;
-import paybandhu.agent.domain.AgentApplicationStatus;
-import paybandhu.agent.domain.AgentKyc;
-import paybandhu.agent.domain.AgentKycStatus;
+import paybandhu.agent.domain.*;
 import paybandhu.agent.repository.AgentApplicationRepository;
+import paybandhu.agent.repository.AgentKycDocumentRepository;
 import paybandhu.agent.repository.AgentKycRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AgentKycServiceImp implements AgentKycService{
 
+    private static final Set<KycDocumentType> REQUIRED_DOCUMENTS =
+            Set.of(
+                    KycDocumentType.AADHAAR,
+                    KycDocumentType.PAN,
+                    KycDocumentType.SIGNATURE
+            );
+
     private final AgentApplicationRepository agentApplicationRepository;
     private final AgentKycRepository agentKycRepository;
+    private final AgentKycDocumentRepository agentKycDocumentRepository;
 
     @Override
     @Transactional
@@ -117,6 +124,35 @@ public class AgentKycServiceImp implements AgentKycService{
             );
         }
 
+        //get all documents
+        List<AgentKycDocument> documents =
+                agentKycDocumentRepository.findByAgentKycId(agentKyc.getId());
+
+        // 4. Check required documents
+        for (KycDocumentType requiredType : REQUIRED_DOCUMENTS) {
+
+            AgentKycDocument document = documents.stream()
+                    .filter(doc ->
+                            doc.getDocumentType() == requiredType
+                    )
+                    .findFirst()
+                    .orElseThrow(() ->
+                            new IllegalStateException(
+                                    "Required KYC document is missing: "
+                                            + requiredType
+                            )
+                    );
+
+
+            // Every required document must be VERIFIED
+            if (document.getStatus() != KycDocumentStatus.VERIFIED) {
+                throw new IllegalStateException(
+                        "KYC document is not verified: "
+                                + requiredType
+                );
+
+            }
+        }
         /*
          * TODO:
          * Validate that all required KYC components are completed:
