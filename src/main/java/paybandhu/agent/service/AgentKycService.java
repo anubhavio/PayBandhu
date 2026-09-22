@@ -16,9 +16,9 @@ public interface AgentKycService {
 
     AgentKycResponse startKyc(Long applicationId);
 
-    AgentKyc completeKyc(Long applicationId);
+    AgentKycResponse completeKyc(Long applicationId);
 
-    AgentKyc verifyKyc(Long applicationId);
+    AgentKycResponse verifyKyc(Long applicationId);
 
     AgentKyc rejectKyc(Long applicationId, String rejectionReason);
 

@@ -21,7 +21,8 @@ public class AgentKycController {
     public ResponseEntity<AgentKycResponse> initiateKyc(
             @PathVariable Long applicationId){
 
-        AgentKycResponse response  = agentKycService.initiateKyc(applicationId);
+        AgentKycResponse response  =
+                agentKycService.initiateKyc(applicationId);
 
         return ResponseEntity.ok(response);
     }
@@ -30,7 +31,28 @@ public class AgentKycController {
     public ResponseEntity<AgentKycResponse> startKyc(
             @PathVariable Long applicationId){
 
-        AgentKycResponse response= agentKycService.startKyc(applicationId);
+        AgentKycResponse response=
+                agentKycService.startKyc(applicationId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{applicationId}/complete-kyc")
+    public ResponseEntity<AgentKycResponse> completeKyc(
+            @PathVariable Long applicationId) {
+
+        AgentKycResponse response =
+                agentKycService.completeKyc(applicationId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{applicationId}/verify-kyc")
+    public ResponseEntity<AgentKycResponse> verifyKyc(
+            @PathVariable Long applicationId ){
+
+        AgentKycResponse response =
+                agentKycService.verifyKyc(applicationId);
 
         return ResponseEntity.ok(response);
     }
