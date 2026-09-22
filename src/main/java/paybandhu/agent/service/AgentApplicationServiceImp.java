@@ -2,14 +2,19 @@ package paybandhu.agent.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import paybandhu.agent.api.request.AgentApplicationRequest;
 import paybandhu.agent.api.response.AgentApplicationResponse;
-import paybandhu.agent.domain.Address;
-import paybandhu.agent.domain.AgentApplication;
-import paybandhu.agent.domain.AgentApplicationStatus;
+import paybandhu.agent.domain.*;
 import paybandhu.agent.repository.AgentApplicationRepository;
+import paybandhu.agent.repository.AgentRepository;
+import paybandhu.notification.SmsService;
+import paybandhu.security.domain.Role;
+import paybandhu.security.domain.User;
+import paybandhu.security.repository.UserRepository;
+import paybandhu.security.service.TemporaryPasswordService;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +24,11 @@ import java.util.UUID;
 public class AgentApplicationServiceImp implements AgentApplicationService{
 
     private final AgentApplicationRepository agentApplicationRepository;
+    private final AgentRepository agentRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final SmsService smsService;
+    private final TemporaryPasswordService temporaryPasswordService;
 
     @Override
     @Transactional
@@ -174,6 +184,94 @@ public class AgentApplicationServiceImp implements AgentApplicationService{
 
         agentApplicationRepository.save(application);
     }
+
+    @Override
+    @Transactional
+    public void activateAgent(Long applicationId) {
+
+        AgentApplication application =
+                agentApplicationRepository.findById(applicationId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Agent application not found: " + applicationId
+                                ));
+
+        if(application.getStatus() != AgentApplicationStatus.ACTIVATION_PENDING){
+            throw new IllegalStateException(
+                    "Agent can only be activated when application" +
+                            "is ACTIVATION_PENDING"
+            );
+        }
+
+        //prevent duplicate user account
+        if(userRepository.findByMobileNumber(application.getMobileNumber()).isPresent()){
+            throw new IllegalStateException(
+                    "user already exists with mobile number: "
+                    + application.getMobileNumber()
+            );
+        }
+
+        //create agent
+        Agent agent = Agent.builder()
+                .agentCode(generateAgentCode())
+                .panNumber(application.getPanNumber())
+                .firstName(application.getFirstName())
+                .middleName(application.getMiddleName())
+                .lastName(application.getLastName())
+                .mobileNumber(application.getMobileNumber())
+                .emailAddress(application.getEmailAddress())
+                .aadhaarNumber(application.getAadhaarNumber())
+                .address(application.getAddress())
+                .status(AgentStatus.ACTIVE)
+                .dateOfBirth(application.getDateOfBirth())
+                .gender(application.getGender())
+                .registrationIp(application.getRegistrationIp())
+                .build();
+
+        Agent savedAgent = agentRepository.save(agent);
+
+        String temporaryPassword =
+                temporaryPasswordService.generate();
+
+        User user = User.builder()
+                .mobileNumber(application.getMobileNumber())
+                .password(passwordEncoder.encode(temporaryPassword))
+                .role(Role.AGENT)
+                .enabled(true)
+                .mustChangePassword(true)
+                .agent(savedAgent)
+                .build();
+
+        userRepository.save(user);
+
+        String message =
+                "Your PayBandhu Agent account has been activated. "
+                        + "Temporary password: "
+                        + temporaryPassword
+                        + ". Please change your password after login.";
+
+        smsService.send(
+                application.getMobileNumber(),
+                message
+        );
+
+        application.setStatus(
+                AgentApplicationStatus.ACTIVATED
+        );
+
+        agentApplicationRepository.save(application);
+
+    }
+
+    private String generateAgentCode() {
+
+        return "AGT-" +
+                UUID.randomUUID()
+                        .toString()
+                        .substring(0, 8)
+                        .toUpperCase();
+    }
+
 
     @Override
     public List<AgentApplicationResponse> getApplications(Long applicationId) {

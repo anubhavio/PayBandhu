@@ -66,4 +66,13 @@ public class AgentApplicationController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{applicationId}/activate")
+    public ResponseEntity<Void> activateAgent(
+            @PathVariable Long applicationId) {
+
+        agentApplicationService.activateAgent(applicationId);
+
+        return ResponseEntity.ok().build();
+    }
 }

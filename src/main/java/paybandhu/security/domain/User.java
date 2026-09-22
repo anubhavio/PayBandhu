@@ -31,6 +31,9 @@ public class User {
     @Column(nullable = false)
     private boolean enabled;
 
+    @Column(nullable = false)
+    private boolean mustChangePassword = false;
+
     @OneToOne
     @JoinColumn(name = "agent_id")
     private Agent agent;
