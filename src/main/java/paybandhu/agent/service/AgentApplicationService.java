@@ -22,6 +22,8 @@ public interface AgentApplicationService {
 
     void moveToActivationPending(Long applicationId);
 
+    void activateAgent(Long applicationId);
+
     List<AgentApplicationResponse> getApplications(
             Long applicationId
     );
