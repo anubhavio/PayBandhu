@@ -58,7 +58,7 @@ public class AgentKycServiceImp implements AgentKycService{
                 .status(AgentKycStatus.PENDING)
                 .build();
 
-
+        application.setStatus(AgentApplicationStatus.KYC_PENDING);
         AgentKyc saved =   agentKycRepository.save(agentKyc);
 
         return mapToResponse(saved);
@@ -112,7 +112,7 @@ public class AgentKycServiceImp implements AgentKycService{
 
     @Override
     @Transactional
-    public AgentKyc completeKyc(Long applicationId) {
+    public AgentKycResponse completeKyc(Long applicationId) {
 
         AgentKyc agentKyc = agentKycRepository
                 .findByAgentApplicationId(applicationId).orElseThrow(() -> new IllegalArgumentException("Kyc not found for application: "+applicationId)
@@ -168,13 +168,43 @@ public class AgentKycServiceImp implements AgentKycService{
         agentKyc.setStatus(AgentKycStatus.SUBMITTED);
         agentKyc.setCompletedAt(LocalDateTime.now());
 
+        AgentKyc saved = agentKycRepository.save(agentKyc);
 
-        return agentKycRepository.save(agentKyc);
+        return mapToResponse(saved);
     }
 
     @Override
-    public AgentKyc verifyKyc(Long applicationId) {
-        return null;
+    @Transactional
+    public AgentKycResponse verifyKyc(Long applicationId) {
+
+        AgentKyc agentKyc = agentKycRepository.findByAgentApplicationId(applicationId)
+                .orElseThrow( () -> new IllegalArgumentException(
+                        "KYC not found for application: "+applicationId )
+                );
+
+        if(agentKyc.getStatus() != AgentKycStatus.SUBMITTED){
+            throw new IllegalStateException(
+                    "KYC can be only verified when it is SUBMITTED"
+            );
+        }
+
+        AgentApplication application = agentKyc.getAgentApplication();
+
+        if(application.getStatus() != AgentApplicationStatus.KYC_PENDING){
+            throw new IllegalStateException(
+                    "Application must be in KYC_PENDING state"
+            );
+        }
+
+        agentKyc.setStatus(AgentKycStatus.VERIFIED);
+        agentKyc.setVerifiedAt(LocalDateTime.now());
+
+        application.setStatus(AgentApplicationStatus.KYC_COMPLETED);
+
+        agentKycRepository.save(agentKyc);
+        agentApplicationRepository.save(application);
+
+        return mapToResponse(agentKyc);
     }
 
     @Override

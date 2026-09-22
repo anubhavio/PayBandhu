@@ -11,6 +11,7 @@ import paybandhu.agent.domain.AgentApplication;
 import paybandhu.agent.domain.AgentApplicationStatus;
 import paybandhu.agent.repository.AgentApplicationRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -79,6 +80,104 @@ public class AgentApplicationServiceImp implements AgentApplicationService{
                 agentApplicationRepository.save(application);
 
         return mapToResponse(savedApplication);
+    }
+
+    @Override
+    @Transactional
+    public void submitForApproval(Long applicationId) {
+
+        AgentApplication application = agentApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Agent application not found: "+applicationId)
+                );
+
+        if(application.getStatus() != AgentApplicationStatus.KYC_COMPLETED){
+            throw new IllegalStateException(
+                    "Application can only be submitted for approval after kyc is completed"
+            );
+        }
+
+        application.setStatus(AgentApplicationStatus.PENDING_APPROVAL);
+
+        agentApplicationRepository.save(application);
+    }
+
+
+    @Override
+    @Transactional
+    public void approveApplication(Long applicationId) {
+
+        AgentApplication application = agentApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Agent application not found: "+applicationId)
+                );
+
+        if(application.getStatus() != AgentApplicationStatus.PENDING_APPROVAL){
+            throw new IllegalStateException(
+                    "Application can only be approved when it is PENDING_APPROVAL"
+            );
+        }
+
+        application.setStatus(AgentApplicationStatus.APPROVED);
+        agentApplicationRepository.save(application);
+    }
+
+    @Override
+    public void rejectApplication(Long applicationId, String reason) {
+
+    }
+
+    @Override
+    @Transactional
+    public void moveToAgreementPending(Long applicationId) {
+
+        AgentApplication application =
+                agentApplicationRepository.findById(applicationId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Agent application not found: " + applicationId
+                                ));
+
+        if (application.getStatus() != AgentApplicationStatus.APPROVED) {
+            throw new IllegalStateException(
+                    "Agreement can only be initiated for an approved application"
+            );
+        }
+
+        application.setStatus(AgentApplicationStatus.AGREEMENT_PENDING);
+        agentApplicationRepository.save(application);
+    }
+
+    @Override
+    @Transactional
+    public void moveToActivationPending(Long applicationId) {
+
+        AgentApplication application =
+                agentApplicationRepository.findById(applicationId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Agent application not found: " + applicationId
+                                ));
+
+        if (application.getStatus()
+                != AgentApplicationStatus.AGREEMENT_ACCEPTED) {
+
+            throw new IllegalStateException(
+                    "Application can only move to activation when " +
+                            "the agreement is accepted"
+            );
+        }
+
+        application.setStatus(
+                AgentApplicationStatus.ACTIVATION_PENDING
+        );
+
+        agentApplicationRepository.save(application);
+    }
+
+    @Override
+    public List<AgentApplicationResponse> getApplications(Long applicationId) {
+        return List.of();
     }
 
     private String generateApplicationNumber(){

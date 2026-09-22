@@ -1,5 +1,8 @@
 package paybandhu.agent.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum AgentApplicationStatus {
 
     SUBMITTED,
