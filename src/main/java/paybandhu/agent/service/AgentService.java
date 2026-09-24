@@ -11,12 +11,6 @@ import java.util.List;
 
 public interface AgentService {
 
-    AgentRegistrationResponse registerAgent(AgentRegistrationRequest request, String ipAddress);
 
-    AgentDocumentResponse uploadDocuments(List<AgentDocumentRequest> documentRequest, Long agentId );
-
-    AgentVerificationResponse verifyAgent(Long agentId);
-
-    AgentVerificationResponse rejectAgent(Long agentId, AgentRejectionReason reason);
 
 }

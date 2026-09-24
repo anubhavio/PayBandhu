@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import paybandhu.security.api.request.ChangePasswordRequest;
 import paybandhu.security.api.request.LoginRequest;
 import paybandhu.security.api.response.LoginResponse;
 import paybandhu.security.domain.User;
+import paybandhu.security.repository.UserRepository;
 
 
 @Service
@@ -15,35 +18,68 @@ import paybandhu.security.domain.User;
 public class AuthenticationServiceImp  implements AuthenticationService{
 
   private final AuthenticationManager authenticationManager;
-
-  private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CurrentUserService currentUserService;
+    private final JwtService jwtService;
 
     @Override
     public LoginResponse login(LoginRequest request) {
 
-       Authentication authentication = authenticationManager.authenticate(
-               new UsernamePasswordAuthenticationToken(
-                       request.getMobileNumber(),
-                       request.getPassword()
-               )
-       );
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getMobileNumber(),
+                        request.getPassword()
+                )
+        );
 
-       CustomUserDetails userDetails =
-               (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
 
-       User user = userDetails.getUser();
+        User user = userDetails.getUser();
 
-       String token = jwtService.generateToken(
-               user.getMobileNumber(),
-               user.getRole().name()
-       );
+        String token = jwtService.generateToken(
+                user.getMobileNumber(),
+                user.getRole().name()
+        );
 
-       return LoginResponse.builder()
-               .userId(user.getId())
-               .mobileNumber(user.getMobileNumber())
-               .role(user.getRole().name())
-               .token(token)
-               .build();
+        return LoginResponse.builder()
+                .userId(user.getId())
+                .mobileNumber(user.getMobileNumber())
+                .role(user.getRole().name())
+                .token(token)
+                .build();
+    }
 
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+
+        User user = currentUserService.getCurrentUser();
+
+        if (!passwordEncoder.matches(
+                request.getCurrentPassword(),
+                user.getPassword()
+        )) {
+            throw new IllegalArgumentException(
+                    "Current password is incorrect"
+            );
+        }
+
+        if (passwordEncoder.matches(
+                request.getNewPassword(),
+                user.getPassword()
+        )) {
+            throw new IllegalArgumentException(
+                    "New password must be different from current password"
+            );
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(request.getNewPassword())
+        );
+
+        user.setMustChangePassword(false);
+
+        userRepository.save(user);
     }
 }
