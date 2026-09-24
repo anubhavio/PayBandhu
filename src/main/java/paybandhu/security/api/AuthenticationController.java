@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import paybandhu.security.api.request.ChangePasswordRequest;
 import paybandhu.security.api.request.LoginRequest;
 import paybandhu.security.api.response.LoginResponse;
 import paybandhu.security.service.AuthenticationService;
@@ -20,6 +21,15 @@ public class AuthenticationController {
             @Valid @RequestBody LoginRequest request
             ){
         return ResponseEntity.ok(authenticationService.login(request));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        authenticationService.changePassword(request);
+
+        return ResponseEntity.ok().build();
     }
 }
 

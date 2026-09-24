@@ -24,47 +24,6 @@ public class AgnetController {
 
     private final AgentService agentService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AgentRegistrationResponse> register (
-            @Valid @RequestBody AgentRegistrationRequest request,
-            HttpServletRequest httpRequest)
-    {
-    String ipAddress = httpRequest.getRemoteAddr();
 
-    AgentRegistrationResponse response = agentService.registerAgent(request, ipAddress);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/{agentId}/documents")
-    public ResponseEntity<AgentDocumentResponse> uploadDocument(
-            @PathVariable Long agentId,
-            @Valid @RequestBody List<AgentDocumentRequest> request) {
-
-
-        AgentDocumentResponse response =
-                agentService.uploadDocuments(request, agentId);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-
-    @PostMapping("/{agentId}/verify")
-    public ResponseEntity<AgentVerificationResponse> verifyAgent(
-            @PathVariable Long agentId
-    ) {
-        AgentVerificationResponse response = agentService.verifyAgent(agentId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/{agentId}/reject")
-    public ResponseEntity<AgentVerificationResponse> rejectAgent(
-            @PathVariable Long agentId,
-            @Valid @RequestBody AgentRejectionReasonRequest reasonRequest
-            )
-    {
-    AgentVerificationResponse  response = agentService.rejectAgent(agentId, reasonRequest.getReason());
-    return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
-    }
 
 }
