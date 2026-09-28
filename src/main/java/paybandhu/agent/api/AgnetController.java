@@ -10,6 +10,7 @@ import paybandhu.agent.api.request.AgentDocumentRequest;
 import paybandhu.agent.api.request.AgentRegistrationRequest;
 import paybandhu.agent.api.request.AgentRejectionReasonRequest;
 import paybandhu.agent.api.response.AgentDocumentResponse;
+import paybandhu.agent.api.response.AgentProfileResponse;
 import paybandhu.agent.api.response.AgentRegistrationResponse;
 import paybandhu.agent.api.response.AgentVerificationResponse;
 import paybandhu.agent.domain.AgentRejectionReason;
@@ -24,6 +25,13 @@ public class AgnetController {
 
     private final AgentService agentService;
 
+    @GetMapping("/me")
+    public ResponseEntity<AgentProfileResponse> getMyProfile(){
+
+        AgentProfileResponse response = agentService.getMyProfile();
+
+        return ResponseEntity.ok(response);
+    }
 
 
 }
